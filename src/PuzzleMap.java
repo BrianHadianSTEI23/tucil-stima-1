@@ -7,7 +7,6 @@ public class PuzzleMap {
     // attributes
     private int rows;
     private int columns;
-    private int modifyPuzzleIter = 0;
     private List<List<Character>> map;
     private List<Character> charInMap;
 
@@ -37,7 +36,7 @@ public class PuzzleMap {
         return this.columns;
     }
 
-    // getter : columns
+    // getter : element
     public char getElement(int rows, int columns) {
         return this.map.get(rows).get(columns);
     }
@@ -71,6 +70,7 @@ public class PuzzleMap {
             }
             System.err.println();
         }
+        System.out.println();
     }
     
     // func : set map empty after finding blockage
@@ -88,7 +88,7 @@ public class PuzzleMap {
 
         for (int i = 0; i < this.getRows(); i++) {
             for (int j = 0; j < this.getColumns(); j++) {
-                if (this.getElement(i, j) != '?') {
+                if (this.getElement(i, j) == '?') {
                     n++;
                 }
             }
@@ -107,7 +107,7 @@ public class PuzzleMap {
         int nBlocksPuzzle = 0;
         for (int i = 0; i < puzzle.getRows(); i++) {
             for (int j = 0; j < puzzle.getColumns(); j++) {
-                if (puzzle.getElement(rows, cols) != '0') {
+                if (puzzle.getElement(i, j) != '0') {
                     nBlocksPuzzle++;
                 }
             }
@@ -115,15 +115,28 @@ public class PuzzleMap {
 
         // check if the block can fit
         if (map.emptyBoxInMap() > nBlocksPuzzle) {
-            int i = 0; int j = 0;
-            while (i < puzzle.getMatrix().size() && fit) {
-                while (j < puzzle.getMatrix().get(i).size() && fit) {
-                    if (puzzle.getMatrix().get(i).get(j) == '+' && map.getElement(i + rows, j + cols) == '+') {
-                        fit = false;
+            if (map.getElement(rows, cols) != '+') {
+                int i = 0;
+                while (i < puzzle.getRows() && fit) {
+                    int j = 0;
+                    while (j < puzzle.getColumns() && fit) {
+                        if ((i + rows) < map.getRows() && ((j + cols) < map.getColumns())) {
+                            if (puzzle.getElement(i, j) == '1' && map.getElement(i + rows, j + cols) == '+') {
+                                fit = false;
+                            }
+                            j++;
+                        } else {
+                            fit = false;
+                        }
+                    }
+                    if (fit) {
+                        i++;
                     }
                 }
+                map.charInMap.add(puzzle.getCharacter());
+            } else {
+                fit = false;
             }
-            map.charInMap.add(puzzle.getCharacter());
         } else {
             fit = false;
         }
@@ -132,9 +145,11 @@ public class PuzzleMap {
 
     // func : set the map after puzzle blocks being placed
     public void setMapAfterPuzzle(int rows, int cols, PuzzleMap map, Puzzle puzzle) {
-        for (int i = 0; i < getRows(); i++) {
-            for (int j = 0; j < getColumns(); j++) {
-                map.setElement(i + rows, j + cols, '+');
+        for (int i = 0; i < puzzle.getRows(); i++) {
+            for (int j = 0; j < puzzle.getColumns(); j++) {
+                if (puzzle.getElement(i, j) == '1') {
+                    map.setElement(i + rows, j + cols, '+');
+                }
             }
         }
     }
@@ -144,7 +159,7 @@ public class PuzzleMap {
         
         // variables
         int i = 0;
-        while (map.getCharInMap().contains(puzzleList[i].getCharacter())) {
+        while (map.getCharInMap().contains(puzzleList[i].getCharacter()) && i < puzzleList.length) {
             i++;
         }
         
@@ -170,79 +185,4 @@ public class PuzzleMap {
         return used;
     }
     
-
-    // syarat max percobaan untuk setiap map puzzle = 8 * N * P(N,N)
-
-    // func : fill the map
-    public boolean fillMap (PuzzleMap map, Puzzle puzzle){
-
-        // variables
-        int nBlockPuzzle = 0;
-
-        // get how many block is filled by puzzle
-        for (int i = 0; i < puzzle.getRows(); i++) {
-            for (int j = 0; j < puzzle.getColumns(); j++) {
-                if (puzzle.getElement(i, j) != '1') {
-                    nBlockPuzzle++;
-                }
-            }
-        }
-        
-        /*
-            * algorihtm
-            * 1. check are there enough empty blocks for puzzle. if no, return false
-            * 2. if yes, check is the puzzle has been used before. if yes, go to next puzzle
-            * 3. if no, check whether the puzzle will fit or not. if yes, place it
-            * 4. if no, flip vertikal and then do recursive using that modified puzzle
-            * 5. if no again, flip horizontal 
-            * 6. if no again, flip vertical
-            * 7. if there are no possible solution, go on to next puzzle
-            * 8. in the end, check again that every puzzle has to be in the charInMap and there are no out of boundary.
-            * 9. if not possible, return false. if possible, return true
-            */
-
-        // check are there enough empty blocks for puzzle
-        if (map.emptyBoxInMap() > nBlockPuzzle) {
-            if (isPuzzleUsed(map, puzzle) == false) { // puzzle not used
-                // trace each position for availability to be filled
-                int k = 0;
-                int l = 0;
-                boolean available = false;
-                while (!available && k < map.getRows()) {
-                    while (!available && l < map.getColumns()) {
-                        if (canBlockFit(k, l, map, puzzle)) { // block dapat masuk
-                            available = true;
-                            setMapAfterPuzzle(k, l, map, puzzle);
-                            return true;
-                        } else { // block cannot fit
-                            if (modifyPuzzleIter < 3) { // recursive of the current map
-                                puzzle.modifyPuzzle();
-                                modifyPuzzleIter++;
-                                return fillMap(map, puzzle);
-                            } else if (k < map.getRows() && l < map.getColumns()){
-                                modifyPuzzleIter = 0;
-                                l++;
-                            } else if (k < map.getRows() && l == (map.getColumns() - 1)){
-                                modifyPuzzleIter = 0;
-                                k++;
-                                l = 0;
-                            } else { // all coordinates has been tried, k >= map.getRows && l == map.getColumns() - 1
-                                modifyPuzzleIter = 0;
-                                return false;
-                            }
-                        }
-                    }
-                }
-                return true;
-            } else {
-                return false; // puzzle has been used
-            }
-        } else {
-            resetPuzzleMap();
-            return false;
-        }
-            
-        
-    }
-
 }

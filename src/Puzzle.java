@@ -1,9 +1,7 @@
 package src;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
-import src.Matrix;
+
 
 
 /* Puzzle class attributes
@@ -21,6 +19,7 @@ public class Puzzle {
     private char character;
     private boolean isFlipVertical;
     private boolean isFlipHorizontal;
+    private boolean isTransposed;
 
     // constructor
     public Puzzle(List<List<Character>> rawPuzzle) {
@@ -56,26 +55,27 @@ public class Puzzle {
         // status of puzzle
         this.isFlipHorizontal = false;
         this.isFlipVertical = false;
+        this.isTransposed = false;
     }
 
     // Getter : rows
     public int getRows() {
-        return rows;
+        return this.rows;
     }
 
     // Getter : columns
     public int getColumns() {
-        return columns;
+        return this.columns;
     }
 
     // Getter : columns
     public char getCharacter() {
-        return character;
+        return this.character;
     }
 
     // getter : matrix
     public List<List<Character>> getMatrix () {
-        return matrix;
+        return this.matrix;
     }
 
     // getter : element in matrix
@@ -91,6 +91,11 @@ public class Puzzle {
     // getter : flipped vertical status
     public boolean getStatusFlippedHorizontal() {
         return this.isFlipHorizontal;
+    }
+
+    // getter : transposed status
+    public boolean getStatusTransposed(){
+        return this.isTransposed;
     }
     
     // setter : columns
@@ -127,29 +132,36 @@ public class Puzzle {
     public void setStatusFlippedHorizontal(boolean bool) {
         this.isFlipHorizontal = bool;
     }
+
+    // setter : set transposed status
+    public void setTransposed(boolean bool){
+        this.isTransposed = bool;
+    }
     
     // setter : transpose puzzle
-    public Puzzle transposePuzzle (Puzzle newPuzzle) {
+    public void transposePuzzle () {
         // variable
-        Puzzle finalPuzzle = newPuzzle;
         List<List<Character>> transposed = new ArrayList<>();
 
-        for (int i = 0; i < newPuzzle.getMatrix().get(0).size(); i++) {
+        for (int i = 0; i < this.getColumns(); i++) {
             List<Character> transposedRows = new ArrayList<>();
-            for (int j = 0; j < newPuzzle.getMatrix().size(); j++) {
-                transposedRows.add(newPuzzle.getMatrix().get(j).get(i));
+            for (int j = 0; j < this.getRows(); j++) {
+                transposedRows.add(this.getElement(j, i));
             }
             transposed.add(transposedRows);
         }
-        finalPuzzle.setMatrix(transposed);
+        this.setMatrix(transposed);
 
         // changing state of the puzzle
-        int temp = newPuzzle.getColumns();
-        finalPuzzle.setColumns(finalPuzzle.getRows());
-        finalPuzzle.setRows(temp);
+        int temp = this.getColumns();
+        this.setColumns(this.getRows());
+        this.setRows(temp);
+        if (this.getStatusTransposed() == true) {
+            this.setTransposed(false);
+        } else {
+            this.setTransposed(true);
+        }
 
-        // returning a new value of Puzzle
-        return finalPuzzle;
     }
 
     // func : flip horizontal puzzle
@@ -173,44 +185,11 @@ public class Puzzle {
         
         // transposing
         // variable
-        Puzzle finalPuzzle = this;
-        List<List<Character>> transposed = new ArrayList<>();
-        
-        for (int i = 0; i < this.getMatrix().get(0).size(); i++) {
-            List<Character> transposedRows = new ArrayList<>();
-            for (int j = 0; j < this.getMatrix().size(); j++) {
-                transposedRows.add(this.getMatrix().get(j).get(i));
-            }
-            transposed.add(transposedRows);
-        }
-        finalPuzzle.setMatrix(transposed);
-        
-        // changing state of the puzzle
-        int temp = this.getColumns();
-        finalPuzzle.setColumns(finalPuzzle.getRows());
-        finalPuzzle.setRows(temp);
-        finalPuzzle.setCharacter(this.getCharacter());
-        
-        // reversing
-        finalPuzzle.flipHorizontalPuzzle();
-        // reset transposed
-        transposed = new ArrayList<>();
-        
-        // transposing again
-        for (int i = 0; i < finalPuzzle.getColumns(); i++) {
-            List<Character> transposedRows = new ArrayList<>();
-            for (int j = 0; j < finalPuzzle.getRows(); j++) {
-                transposedRows.add(finalPuzzle.getMatrix().get(j).get(i));
-            }
-            transposed.add(transposedRows);
-        }
-        finalPuzzle.setMatrix(transposed);
-        
-        // changing state of the puzzle
-        int temp2 = finalPuzzle.getColumns();
-        finalPuzzle.setColumns(finalPuzzle.getRows());
-        finalPuzzle.setRows(temp2);
-        // changing status of isflippedvertical and isflippedhorizontal
+        this.transposePuzzle();
+        this.flipHorizontalPuzzle();
+        this.transposePuzzle();
+
+        // Changing status of flipping
         if (this.getStatusFlippedHorizontal() == true) {
             this.setStatusFlippedHorizontal(false);
         } else {
@@ -237,7 +216,11 @@ public class Puzzle {
             this.flipHorizontalPuzzle();
         } else if (this.getStatusFlippedVertical() == true && this.getStatusFlippedHorizontal() == true){
             this.flipVerticalPuzzle();
+        } else if (this.getStatusTransposed() == false){ // default case
+            this.flipHorizontalPuzzle();
+            this.transposePuzzle();
         }
+        // System.out.println(this.getMatrix());
     }
 
 }

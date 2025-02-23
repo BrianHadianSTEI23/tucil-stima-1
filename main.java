@@ -10,7 +10,11 @@ private means that it can only be called from the same class.
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.awt.Color;
+import java.awt.image.BufferedImage;
 import java.util.Scanner;
+import javax.imageio.ImageIO;
 
 import src.Puzzle;
 import src.PuzzleMap;
@@ -96,30 +100,155 @@ public class main {
                     PuzzleMap MainMap = new PuzzleMap(rows, columns);
 
                     // debug
-                    System.out.println(puzzleList[4].getRows());
-                    System.out.println(puzzleList[4].getColumns());
-                    System.out.println(puzzleList[4].getMatrix());
-                    System.out.println(puzzleList[4].getCharacter());
-                    System.out.println(puzzleList[4].getStatusFlippedHorizontal());
-                    System.out.println(puzzleList[4].getStatusFlippedVertical());
+                    // MainMap.getPuzzleMap();
+                    // for (int i = 0; i < MainMap.getRows(); i++) {
+                    //     for (int j = 0; j < MainMap.getColumns() - 3; j++) {
+                    //         MainMap.setElement(i, j, '+');
+                    //     }
+                    // }
+                    // MainMap.setElement(0, 4, '+');
+                    // MainMap.setElement(1, 4, '+');
+                    // MainMap.setElement(2, 4, '+');
+                    MainMap.getPuzzleMap();
+                    // System.out.println(puzzleList[4].getMatrix());
+                    // puzzleList[4].modifyPuzzle();
+                    // puzzleList[4].modifyPuzzle();
+                    // puzzleList[4].modifyPuzzle();
+                    // puzzleList[4].modifyPuzzle();
+                    // System.out.println(puzzleList[4].getRows());
+                    // System.out.println(puzzleList[4].getColumns());
+                    // System.out.println(puzzleList[4].getMatrix());
+                    // System.out.println(puzzleList[4].getMatrix());
+                    // puzzleList[4].getRows();
+                    // puzzleList[4].getColumns();
+                    // puzzleList[4].getStatusFlippedHorizontal();
+                    // puzzleList[4].getStatusFlippedVertical();
+                    // System.out.println(puzzleList[4].getMatrix());
+
+                    // System.out.println(MainMap.canBlockFit(0, 2, MainMap, puzzleList[4]));
+                    // MainMap.setMapAfterPuzzle(0, 2, MainMap, puzzleList[4]);
                     
 
                     // fill the main map
-                    // boolean possible = true;
-                    // int operationIter = 0;
-                    // while (MainMap.getCharInMap().size() <= puzzleList.length && possible) {
-                    //     if (operationIter < (8 * puzzleList.length * (factorial(operationIter)))) {
-                    //         MainMap.fillMap(MainMap, MainMap.puzzleNotUsed(MainMap, puzzleList));
-                    //     } else {
-                    //         possible = false;
+
+                    // variables
+                    boolean full = false;
+                    int operationIter = 0;
+                    
+                    
+                    /*
+                    * algorihtm
+                    * 1. check are there enough empty blocks for puzzle. if no, return false
+                    * 2. if yes, check is the puzzle has been used before. if yes, go to next puzzle
+                    * 3. if no, check whether the puzzle will fit or not. if yes, place it
+                    * 4. if no, flip vertikal and then do recursive using that modified puzzle
+                    * 5. if no again, flip horizontal 
+                    * 6. if no again, flip vertical
+                    * 7. if there are no possible solution, go on to next puzzle
+                    * 8. in the end, check again that every puzzle has to be in the charInMap and there are no out of boundary.
+                    * 9. if not possible, return false. if possible, return true
+                    */
+                    
+                    
+                    
+                    while (MainMap.getCharInMap().size() <= puzzleList.length && operationIter < (8 * MainMap.getCharInMap().size() * factorial(MainMap.getCharInMap().size())) && !full) {
+                        
+                        // variables
+                        int nBlockPuzzle = 0;
+                        Puzzle puzzle = MainMap.puzzleNotUsed(MainMap, puzzleList);
+                        
+                        // get how many block is filled by puzzle
+                        for (int i = 0; i < puzzle.getRows(); i++) {
+                            for (int j = 0; j < puzzle.getColumns(); j++) {
+                                if (puzzle.getElement(i, j) != '1') {
+                                    nBlockPuzzle++;
+                                }
+                            }
+                        }
+                        
+                        // check are there enough empty blocks for puzzle
+                        if (MainMap.emptyBoxInMap() > nBlockPuzzle) {
+                            // trace each position for availability to be filled
+                            int k = 0;
+                            int l = 0;
+                            boolean found = false;
+                            int modifyPuzzleIter = 0;
+                            while (!found && k < MainMap.getRows()) {
+                                while (!found && l < MainMap.getColumns()) {
+                                    if (MainMap.canBlockFit(k, l, MainMap, puzzle)) { // block dapat masuk
+                                        found = true;
+                                        MainMap.setMapAfterPuzzle(k, l, MainMap, puzzle);
+                                    } else { // block cannot fit
+                                        while (modifyPuzzleIter < 7 && !found) {
+                                            puzzle.modifyPuzzle();
+                                            if (MainMap.canBlockFit(k, l, MainMap, puzzle)) { // block dapat masuk
+                                                found = true;
+                                                MainMap.setMapAfterPuzzle(k, l, MainMap, puzzle);
+                                            } else {
+                                                modifyPuzzleIter++;
+                                            }
+                                        }
+                                        puzzle.modifyPuzzle(); // reset to first position
+
+                                        // check other coordinate
+                                        if (k < MainMap.getRows() && l < MainMap.getColumns()){
+                                            modifyPuzzleIter = 0;
+                                            l++;
+                                        } else if (k < MainMap.getRows() && l == (MainMap.getColumns() - 1)){
+                                            modifyPuzzleIter = 0;
+                                            k++;
+                                            l = 0;
+                                        }
+                                    }
+                                }
+                            }
+                        } else { // there are no enough space in main map
+                            MainMap.resetPuzzleMap();
+                        }
+
+                    }
+                    
+                    // final check to sysout
+                    if (full) {
+                        MainMap.getPuzzleMap();
+                    } else {
+                        System.out.println("Tidak bisa dilakukan proses brute force.\nSilakan gunakan file lain.");
+                    }
+
+
+                    // converting into image
+                    // int[][] matrix = {
+                    //     {0, 1, 0, 1, 0},
+                    //     {1, 0, 1, 0, 1},
+                    //     {0, 1, 1, 1, 0},
+                    //     {1, 0, 1, 0, 1},
+                    //     {0, 1, 0, 1, 0}
+                    // };
+
+                    // int width = matrix[0].length;
+                    // int height = matrix.length;
+
+                    // // Create a BufferedImage
+                    // BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+
+                    // // Convert matrix to image pixels
+                    // for (int y = 0; y < height; y++) {
+                    //     for (int x = 0; x < width; x++) {
+                    //         if (matrix[y][x] == 1) {
+                    //             image.setRGB(x, y, Color.BLACK.getRGB()); // Set pixel to black
+                    //         } else {
+                    //             image.setRGB(x, y, Color.WHITE.getRGB()); // Set pixel to white
+                    //         }
                     //     }
                     // }
 
-                    // final check to sysout
-                    // if (possible) {
-                    //     MainMap.getPuzzleMap();
-                    // } else {
-                    //     System.out.println("Tidak bisa dilakukan proses brute force.\nSilakan coba lagi");
+                    // // Save the image as a PNG file
+                    // try {
+                    //     File output = new File("output.png");
+                    //     ImageIO.write(image, "png", output);
+                    //     System.out.println("Image saved as output.png");
+                    // } catch (Exception e) {
+                    //     e.printStackTrace();
                     // }
 
                 } else {
