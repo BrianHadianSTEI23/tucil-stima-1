@@ -7,14 +7,27 @@ protected means that for a futnciton declared protected, it can only be accessed
 private means that it can only be called from the same class.
  */
 
+ /*
+    * algorihtm
+    * 1. check are there enough empty blocks for puzzle. if no, return false
+    * 2. if yes, check is the puzzle has been used before. if yes, go to next puzzle
+    * 3. if no, check whether the puzzle will fit or not. if yes, place it
+    * 4. if no, flip vertikal and then do recursive using that modified puzzle
+    * 5. if no again, flip horizontal 
+    * 6. if no again, flip vertical
+    * 7. if there are no possible solution, go on to next puzzle
+    * 8. in the end, check again that every puzzle has to be in the charInMap and there are no out of boundary.
+    * 9. if not possible, return false. if possible, return true
+*/
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.awt.Color;
-import java.awt.image.BufferedImage;
+// import java.util.Map;
+// import java.awt.Color;
+// import java.awt.image.BufferedImage;
 import java.util.Scanner;
-import javax.imageio.ImageIO;
+// import javax.imageio.ImageIO;
 
 import src.Puzzle;
 import src.PuzzleMap;
@@ -102,14 +115,28 @@ public class main {
                     // debug
                     // MainMap.getPuzzleMap();
                     // for (int i = 0; i < MainMap.getRows(); i++) {
-                    //     for (int j = 0; j < MainMap.getColumns() - 3; j++) {
+                    //     for (int j = 0; j < MainMap.getColumns() - 2; j++) {
                     //         MainMap.setElement(i, j, '+');
                     //     }
                     // }
-                    // MainMap.setElement(0, 4, '+');
+                    // MainMap.setElement(0, 3, '+');
                     // MainMap.setElement(1, 4, '+');
                     // MainMap.setElement(2, 4, '+');
-                    MainMap.getPuzzleMap();
+
+                    // debug: testing canBlockFit
+                    // MainMap.getPuzzleMap();
+                    // int iteration = 0;
+                    // boolean found = false;
+                    // while (iteration < 8 && !found) {
+                    //     if (MainMap.canBlockFit(0, 3, MainMap, puzzleList[0])) {
+                    //         MainMap.setMapAfterPuzzle(0, 3, MainMap, puzzleList[0]);
+                    //     } else {
+                    //         puzzleList[0].modifyPuzzle();
+                    //     }
+                    //     iteration++;
+                    // }
+                    // MainMap.getPuzzleMap();
+
                     // System.out.println(puzzleList[4].getMatrix());
                     // puzzleList[4].modifyPuzzle();
                     // puzzleList[4].modifyPuzzle();
@@ -133,25 +160,10 @@ public class main {
 
                     // variables
                     boolean full = false;
-                    int operationIter = 0;
-                    
-                    
-                    /*
-                    * algorihtm
-                    * 1. check are there enough empty blocks for puzzle. if no, return false
-                    * 2. if yes, check is the puzzle has been used before. if yes, go to next puzzle
-                    * 3. if no, check whether the puzzle will fit or not. if yes, place it
-                    * 4. if no, flip vertikal and then do recursive using that modified puzzle
-                    * 5. if no again, flip horizontal 
-                    * 6. if no again, flip vertical
-                    * 7. if there are no possible solution, go on to next puzzle
-                    * 8. in the end, check again that every puzzle has to be in the charInMap and there are no out of boundary.
-                    * 9. if not possible, return false. if possible, return true
-                    */
-                    
-                    
-                    
-                    while (MainMap.getCharInMap().size() <= puzzleList.length && operationIter < (8 * MainMap.getCharInMap().size() * factorial(MainMap.getCharInMap().size())) && !full) {
+                    int operationIter = 0;             
+                    int maxIter =  8 * puzzleList.length * factorial(puzzleList.length);
+        
+                    while (MainMap.getCharInMap().size() <= puzzleList.length && operationIter < maxIter && !full) {
                         
                         // variables
                         int nBlockPuzzle = 0;
@@ -170,15 +182,17 @@ public class main {
                         if (MainMap.emptyBoxInMap() > nBlockPuzzle) {
                             // trace each position for availability to be filled
                             int k = 0;
-                            int l = 0;
                             boolean found = false;
                             int modifyPuzzleIter = 0;
                             while (!found && k < MainMap.getRows()) {
+                                int l = 0;
                                 while (!found && l < MainMap.getColumns()) {
                                     if (MainMap.canBlockFit(k, l, MainMap, puzzle)) { // block dapat masuk
                                         found = true;
                                         MainMap.setMapAfterPuzzle(k, l, MainMap, puzzle);
                                     } else { // block cannot fit
+
+                                        // check every possibility
                                         while (modifyPuzzleIter < 7 && !found) {
                                             puzzle.modifyPuzzle();
                                             if (MainMap.canBlockFit(k, l, MainMap, puzzle)) { // block dapat masuk
@@ -191,20 +205,18 @@ public class main {
                                         puzzle.modifyPuzzle(); // reset to first position
 
                                         // check other coordinate
-                                        if (k < MainMap.getRows() && l < MainMap.getColumns()){
-                                            modifyPuzzleIter = 0;
-                                            l++;
-                                        } else if (k < MainMap.getRows() && l == (MainMap.getColumns() - 1)){
-                                            modifyPuzzleIter = 0;
-                                            k++;
-                                            l = 0;
-                                        }
+                                        l++;
+                                        modifyPuzzleIter = 0;
                                     }
+                                }
+                                if (!found) {
+                                    k++;
                                 }
                             }
                         } else { // there are no enough space in main map
                             MainMap.resetPuzzleMap();
                         }
+                        MainMap.getPuzzleMap();
 
                     }
                     

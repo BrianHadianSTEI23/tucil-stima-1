@@ -115,34 +115,29 @@ public class PuzzleMap {
 
         // check if the block can fit
         if (map.emptyBoxInMap() > nBlocksPuzzle) {
-            if (map.getElement(rows, cols) != '+') {
-                int i = 0;
-                while (i < puzzle.getRows() && fit) {
-                    int j = 0;
-                    while (j < puzzle.getColumns() && fit) {
-                        if ((i + rows) < map.getRows() && ((j + cols) < map.getColumns())) {
-                            if (puzzle.getElement(i, j) == '1' && map.getElement(i + rows, j + cols) == '+') {
-                                fit = false;
-                            }
-                            j++;
-                        } else {
+            int i = 0;
+            while (i < puzzle.getRows() && fit) {
+                int j = 0;
+                while (j < puzzle.getColumns() && fit) {
+                    if ((i + rows) < map.getRows() && ((j + cols) < map.getColumns())) {
+                        if (puzzle.getElement(i, j) == '1' && map.getElement(i + rows, j + cols) == '+') {
                             fit = false;
                         }
-                    }
-                    if (fit) {
-                        i++;
+                        j++;
+                    } else {
+                        fit = false;
                     }
                 }
-                map.charInMap.add(puzzle.getCharacter());
-            } else {
-                fit = false;
+                if (fit) {
+                    i++;
+                }
             }
         } else {
             fit = false;
         }
         return fit;
     }
-
+    
     // func : set the map after puzzle blocks being placed
     public void setMapAfterPuzzle(int rows, int cols, PuzzleMap map, Puzzle puzzle) {
         for (int i = 0; i < puzzle.getRows(); i++) {
@@ -152,6 +147,7 @@ public class PuzzleMap {
                 }
             }
         }
+        map.charInMap.add(puzzle.getCharacter());
     }
 
     // func : check for the puzzle block has been placed before or not
