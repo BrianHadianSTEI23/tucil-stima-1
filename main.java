@@ -91,30 +91,36 @@ public class main {
                     
                     // standardize all the spaces and make it all in puzzle format and stored in a list[]
                     puzzleList = standardizePuzzle(puzzle);
-                    
-                    // debug
-                    System.out.println(columns);
 
                     // main algorithm
                     PuzzleMap MainMap = new PuzzleMap(rows, columns);
+
+                    // debug
+                    System.out.println(puzzleList[4].getRows());
+                    System.out.println(puzzleList[4].getColumns());
+                    System.out.println(puzzleList[4].getMatrix());
+                    System.out.println(puzzleList[4].getCharacter());
+                    System.out.println(puzzleList[4].getStatusFlippedHorizontal());
+                    System.out.println(puzzleList[4].getStatusFlippedVertical());
                     
+
                     // fill the main map
-                    boolean possible = true;
-                    int operationIter = 0;
-                    while (MainMap.getCharInMap().size() <= puzzleList.length && possible) {
-                        if (operationIter < (8 * puzzleList.length * (factorial(operationIter)))) {
-                            MainMap.fillMap(MainMap, MainMap.puzzleNotUsed(MainMap, puzzleList));
-                        } else {
-                            possible = false;
-                        }
-                    }
+                    // boolean possible = true;
+                    // int operationIter = 0;
+                    // while (MainMap.getCharInMap().size() <= puzzleList.length && possible) {
+                    //     if (operationIter < (8 * puzzleList.length * (factorial(operationIter)))) {
+                    //         MainMap.fillMap(MainMap, MainMap.puzzleNotUsed(MainMap, puzzleList));
+                    //     } else {
+                    //         possible = false;
+                    //     }
+                    // }
 
                     // final check to sysout
-                    if (possible) {
-                        MainMap.getPuzzleMap();
-                    } else {
-                        System.out.println("Tidak bisa dilakukan proses brute force.\nSilakan coba lagi");
-                    }
+                    // if (possible) {
+                    //     MainMap.getPuzzleMap();
+                    // } else {
+                    //     System.out.println("Tidak bisa dilakukan proses brute force.\nSilakan coba lagi");
+                    // }
 
                 } else {
                     System.out.println("No service as such. Please try again.");
