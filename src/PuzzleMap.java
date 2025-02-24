@@ -1,6 +1,7 @@
 package src;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class PuzzleMap {
 
@@ -80,6 +81,7 @@ public class PuzzleMap {
                 this.setElement(i, j, '?');
             }
         }
+        this.charInMap = new ArrayList<>();
     }
 
     // func : check if the puzzle map has still slot left
@@ -154,12 +156,18 @@ public class PuzzleMap {
     public Puzzle puzzleNotUsed (PuzzleMap map, Puzzle[] puzzleList) {
         
         // variables
-        int i = 0;
-        while (map.getCharInMap().contains(puzzleList[i].getCharacter()) && i < puzzleList.length) {
-            i++;
+        Random random = new Random();
+        int i = random.nextInt(7);
+        boolean found = false;
+        while (!found) {
+            if (!map.getCharInMap().contains(puzzleList[i].getCharacter()) ) {
+                found = true;
+            } else {
+                i = random.nextInt(7);
+            }
         }
         
-        if (i < puzzleList.length) {
+        if (found) {
             return puzzleList[i];
         } else {
             return null;
@@ -179,6 +187,27 @@ public class PuzzleMap {
             }
         }
         return used;
+    }
+
+    // func : to check is there a position that can be filled by a particular puzzle block
+    public boolean isThereAValidPosition(PuzzleMap map, Puzzle puzzle) {
+
+        // variables
+        int i = 0;
+        boolean found = false;
+        while (i < map.getRows() && !found) {
+            int j = 0;
+            while (j < map.getColumns() && !found) {
+                if (map.canBlockFit(i, j, map, puzzle)) {
+                    found = true;
+                } 
+                j++;
+            }
+            i++;
+            
+        }
+
+        return found;
     }
     
 }

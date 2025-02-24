@@ -46,6 +46,9 @@ public class main {
     // main program
     public static void main(String[] args) {
         try {
+            // count time elapsed
+            long timeStart = System.currentTimeMillis();
+
             Puzzle[] puzzleList;
             Scanner scanner = new Scanner(targetFile);
             String line = scanner.nextLine();
@@ -139,9 +142,22 @@ public class main {
 
                     // System.out.println(puzzleList[4].getMatrix());
                     // puzzleList[4].modifyPuzzle();
+                    // System.out.println(puzzleList[4].getMatrix());
                     // puzzleList[4].modifyPuzzle();
+                    // System.out.println(puzzleList[4].getMatrix());
                     // puzzleList[4].modifyPuzzle();
+                    // System.out.println(puzzleList[4].getMatrix());
                     // puzzleList[4].modifyPuzzle();
+                    // System.out.println(puzzleList[4].getMatrix());
+                    // puzzleList[4].modifyPuzzle();
+                    // System.out.println(puzzleList[4].getMatrix());
+                    // puzzleList[4].modifyPuzzle();
+                    // System.out.println(puzzleList[4].getMatrix());
+                    // puzzleList[4].modifyPuzzle();
+                    // System.out.println(puzzleList[4].getMatrix());
+                    // puzzleList[4].modifyPuzzle();
+                    // System.out.println(puzzleList[4].getMatrix());
+
                     // System.out.println(puzzleList[4].getRows());
                     // System.out.println(puzzleList[4].getColumns());
                     // System.out.println(puzzleList[4].getMatrix());
@@ -161,7 +177,7 @@ public class main {
                     // variables
                     boolean full = false;
                     int operationIter = 0;             
-                    int maxIter =  8 * puzzleList.length * factorial(puzzleList.length);
+                    int maxIter =  8 * puzzleList.length * factorial(puzzleList.length) * 100;
         
                     while (MainMap.getCharInMap().size() <= puzzleList.length && operationIter < maxIter && !full) {
                         
@@ -172,14 +188,16 @@ public class main {
                         // get how many block is filled by puzzle
                         for (int i = 0; i < puzzle.getRows(); i++) {
                             for (int j = 0; j < puzzle.getColumns(); j++) {
-                                if (puzzle.getElement(i, j) != '1') {
+                                if (puzzle.getElement(i, j) == '1') {
                                     nBlockPuzzle++;
                                 }
                             }
                         }
+                        // System.out.println(MainMap.getCharInMap());
+                        // System.out.println("hello");
                         
                         // check are there enough empty blocks for puzzle
-                        if (MainMap.emptyBoxInMap() > nBlockPuzzle) {
+                        if (MainMap.emptyBoxInMap() >= nBlockPuzzle && MainMap.isThereAValidPosition(MainMap, puzzle)) { 
                             // trace each position for availability to be filled
                             int k = 0;
                             boolean found = false;
@@ -204,9 +222,13 @@ public class main {
                                         }
                                         puzzle.modifyPuzzle(); // reset to first position
 
-                                        // check other coordinate
-                                        l++;
-                                        modifyPuzzleIter = 0;
+                                        // resetting variables
+                                        if (!found) {
+    
+                                            // check other coordinate
+                                            l++;
+                                            modifyPuzzleIter = 0;
+                                        }
                                     }
                                 }
                                 if (!found) {
@@ -216,8 +238,17 @@ public class main {
                         } else { // there are no enough space in main map
                             MainMap.resetPuzzleMap();
                         }
-                        MainMap.getPuzzleMap();
-
+                        
+                        // check if it's full
+                        if (MainMap.getCharInMap().size() == puzzleList.length) {
+                            full = true;
+                        } else {
+                            operationIter++;
+                        }
+                        
+                        // MainMap.getPuzzleMap();
+                        // System.out.println(MainMap.getCharInMap());
+                        System.out.println(operationIter);
                     }
                     
                     // final check to sysout
@@ -226,6 +257,8 @@ public class main {
                     } else {
                         System.out.println("Tidak bisa dilakukan proses brute force.\nSilakan gunakan file lain.");
                     }
+                    long timeStop = System.currentTimeMillis();
+                    System.out.println("Elapsed time : " + (timeStop - timeStart) + " ms.");
 
 
                     // converting into image

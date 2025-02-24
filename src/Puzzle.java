@@ -219,6 +219,9 @@ public class Puzzle {
         } else if (this.getStatusTransposed() == false){ // default case
             this.flipHorizontalPuzzle();
             this.transposePuzzle();
+        } else {
+            this.transposePuzzle();
+            this.flipVerticalPuzzle();
         }
         // System.out.println(this.getMatrix());
     }
