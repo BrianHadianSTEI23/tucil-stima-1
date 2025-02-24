@@ -20,14 +20,18 @@ private means that it can only be called from the same class.
     * 9. if not possible, return false. if possible, return true
 */
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-// import java.util.Map;
-// import java.awt.Color;
-// import java.awt.image.BufferedImage;
+import java.util.Random;
+import java.awt.image.BufferedImage;
 import java.util.Scanner;
 // import javax.imageio.ImageIO;
+
+import javax.imageio.ImageIO;
 
 import src.Puzzle;
 import src.PuzzleMap;
@@ -71,7 +75,6 @@ public class main {
                     fileName = inputScanner.nextLine();
                     targetFile = new File(directory, fileName);
                 }
-                inputScanner.close();
             }
             
             
@@ -131,9 +134,6 @@ public class main {
                     
                     // standardize all the spaces and make it all in puzzle format and stored in a list[]
                     puzzleList = standardizePuzzle(puzzle);
-                    // for (int i = 0; i < puzzleList.length; i++) {
-                    //     System.out.println(puzzleList[i].getMatrix());
-                    // }
 
                     // main algorithm
                     PuzzleMap MainMap = new PuzzleMap(rows, columns);
@@ -171,7 +171,6 @@ public class main {
                             while (!found && k < MainMap.getRows()) {
                                 int l = 0;
                                 while (!found && l < MainMap.getColumns()) {
-                                    // System.out.println(MainMap.canBlockFit(k, l, MainMap, puzzle));
                                     if (MainMap.canBlockFit(k, l, MainMap, puzzle)) { // block dapat masuk
                                         found = true;
                                         MainMap.setMapAfterPuzzle(k, l, MainMap, puzzle);
@@ -193,7 +192,6 @@ public class main {
 
                                         // resetting variables
                                         if (!found) {
-    
                                             // check other coordinate
                                             l++;
                                         }
@@ -213,9 +211,9 @@ public class main {
                         }
                         operationIter++;
                         
-                        
-                        MainMap.getPuzzleMap();
-                        System.out.println(MainMap.getCharInMap());
+                        // main debug
+                        // MainMap.getPuzzleMap();
+                        // System.out.println(MainMap.getCharInMap());
                     }
                     
                     // final check to sysout
@@ -223,48 +221,69 @@ public class main {
                     if (MainMap.emptyBoxInMap() == 0) {
                         MainMap.getPuzzleMap();
                     } else {
-                        System.out.println("Tidak bisa dilakukan proses brute force.\nSilakan gunakan file lain.");
+                        System.out.println("Brute force cannot be done.\nPlease try another file.");
                     }
                     long timeStop = System.currentTimeMillis();
                     System.out.println("Elapsed time : " + (timeStop - timeStart) + " ms.");
-                    System.out.println("Iteration tried : " + operationIter);
+                    System.out.println("Iteration tried : " + operationIter);     
 
+                    // keeping the result as a .txt file
 
-                    // converting into image
-                    // int[][] matrix = {
-                    //     {0, 1, 0, 1, 0},
-                    //     {1, 0, 1, 0, 1},
-                    //     {0, 1, 1, 1, 0},
-                    //     {1, 0, 1, 0, 1},
-                    //     {0, 1, 0, 1, 0}
-                    // };
+                    
+                    // bonus : converting into image
+                    System.out.println("Want to save file : (y/n) ");
+                    String choice = inputScanner.nextLine();
+                    if (choice.equals("y")) {
+                        System.out.println("Convert to image : (y/n) ");
+                        String convert = inputScanner.nextLine();
+                        System.out.println("Enter name to be saved: ");
+                        String fileSavedName = inputScanner.nextLine();
+                        if (convert.equals("y")) {
+                            // converting into image
+                            int width = MainMap.getColumns();
+                            int height = MainMap.getRows();
+                            List<Integer> colorHex = new ArrayList<>();
+                            Random random = new Random();
+                            for (int i = 0; i < puzzleList.length; i++) {
+                                int color = random.nextInt(0xFFFFFF + 1);
+                                colorHex.add(color);
+                            }
 
-                    // int width = matrix[0].length;
-                    // int height = matrix.length;
+                            // Create a BufferedImage
+                            BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 
-                    // // Create a BufferedImage
-                    // BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+                            // Convert matrix to image pixels
+                            for (int y = 0; y < height; y++) {
+                                for (int x = 0; x < width; x++) {
+                                    // searching index of character in charMap
+                                    boolean found = false;
+                                    int i = 0;
+                                    while (!found && i < MainMap.getCharInMap().size()) {
+                                        if (MainMap.getCharInMap().get(i) == MainMap.getElement(y, x)) {
+                                            image.setRGB(x, y, colorHex.get(i)); // Set pixel to black
+                                            found = true;
+                                        }
+                                        i++;
+                                    }
+                                }
+                            }
 
-                    // // Convert matrix to image pixels
-                    // for (int y = 0; y < height; y++) {
-                    //     for (int x = 0; x < width; x++) {
-                    //         if (matrix[y][x] == 1) {
-                    //             image.setRGB(x, y, Color.BLACK.getRGB()); // Set pixel to black
-                    //         } else {
-                    //             image.setRGB(x, y, Color.WHITE.getRGB()); // Set pixel to white
-                    //         }
-                    //     }
-                    // }
-
-                    // // Save the image as a PNG file
-                    // try {
-                    //     File output = new File("output.png");
-                    //     ImageIO.write(image, "png", output);
-                    //     System.out.println("Image saved as output.png");
-                    // } catch (Exception e) {
-                    //     e.printStackTrace();
-                    // }
-
+                            // Save the image as a PNG file
+                            try {
+                                int numberOfOutput = random.nextInt(10);
+                                File output = new File("output" + numberOfOutput +".png");
+                                ImageIO.write(image, "png", output);
+                                System.out.println("Image saved as " + output + ".png");
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        } else {
+                            writeMatrixToFile(MainMap, fileSavedName);
+                        }
+                    } else {
+                        System.out.println("Thank you for using this product.");
+                    }
+                    inputScanner.close();
                 } else {
                     System.out.println("No service as such. Please try again.");
                 } 
@@ -362,6 +381,22 @@ public class main {
             return 1;
         } else {
             return x * factorial(x - 1);
+        }
+    }
+
+    // writing result into file
+    public static void writeMatrixToFile(PuzzleMap map, String filename) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filename))) {
+            writer.newLine();
+            for (int i = 0; i < map.getRows(); i++) {
+                for (int j = 0; j < map.getColumns(); j++) {
+                    writer.write(map.getElement(i, j));
+                }
+                writer.newLine();
+            }
+            System.out.println("Matrix saved to " + filename);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
     

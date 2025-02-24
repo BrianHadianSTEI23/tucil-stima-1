@@ -124,7 +124,7 @@ public class PuzzleMap {
                 while (j < puzzle.getColumns() && fit) {
                     if ((i + rows) < map.getRows() && ((j + cols) < map.getColumns())) {
                         // System.out.println("map at " + i + rows + " and " + j + cols + " position : " + map.getElement(i + rows, j + cols));
-                        if (puzzle.getElement(i, j) == '1' && map.getElement(i + rows, j + cols) == '+') {
+                        if (puzzle.getElement(i, j) == '1' && map.getCharInMap().contains(map.getElement(i + rows, j + cols))) {
                             fit = false;
                         }
                         j++;
@@ -147,7 +147,7 @@ public class PuzzleMap {
         for (int i = 0; i < puzzle.getRows(); i++) {
             for (int j = 0; j < puzzle.getColumns(); j++) {
                 if (puzzle.getElement(i, j) == '1') {
-                    map.setElement(i + rows, j + cols, '+');
+                    map.setElement(i + rows, j + cols, puzzle.getCharacter());
                 }
             }
         }
