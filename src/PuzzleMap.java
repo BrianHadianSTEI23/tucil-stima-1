@@ -117,7 +117,7 @@ public class PuzzleMap {
 
 
         // check if the block can fit
-        if (map.emptyBoxInMap() > nBlocksPuzzle) {
+        if (map.emptyBoxInMap() >= nBlocksPuzzle) {
             int i = 0;
             while (i < puzzle.getRows() && fit) {
                 int j = 0;
@@ -161,7 +161,7 @@ public class PuzzleMap {
         Random random = new Random();
         int i = random.nextInt(puzzleList.length);
         boolean found = false;
-        while (!found) {
+        while (!found && (map.getCharInMap().size() < puzzleList.length)) {
             if (!map.isPuzzleUsed(map, puzzleList[i])) {
                 found = true;
             } else {
@@ -195,24 +195,14 @@ public class PuzzleMap {
     public boolean isThereAValidPosition(PuzzleMap map, Puzzle puzzle) {
 
         // variables
-        int i = 0;
-        boolean found = false;
-        while (i < map.getRows() && !found) {
-            int j = 0;
-            while (j < map.getColumns() && !found) {
-                if (map.canBlockFit(i, j, map, puzzle)) {
-                    found = true;
-                } else {
-                    j++;
+        for (int i = 0; i < map.getRows(); i++) {
+            for (int j = 0; j < map.getColumns(); j++) {
+                if (map.canBlockFit(i, j, map, puzzle)) { 
+                    return true;  // Return immediately when found
                 }
             }
-            if (!found) {
-                i++;
-            }
-            
         }
-
-        return found;
+        return false;  // No valid position found
     }
     
 }

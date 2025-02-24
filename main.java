@@ -110,6 +110,9 @@ public class main {
                     
                     // standardize all the spaces and make it all in puzzle format and stored in a list[]
                     puzzleList = standardizePuzzle(puzzle);
+                    // for (int i = 0; i < puzzleList.length; i++) {
+                    //     System.out.println(puzzleList[i].getMatrix());
+                    // }
 
                     // main algorithm
                     PuzzleMap MainMap = new PuzzleMap(rows, columns);
@@ -119,7 +122,7 @@ public class main {
                     // variables
                     boolean full = false;
                     int operationIter = 0;             
-                    int maxIter =  8 * puzzleList.length * factorial(puzzleList.length) * 100;
+                    // int maxIter =  8 * puzzleList.length * factorial(puzzleList.length) * 100;
                     long timeStart = System.currentTimeMillis();
                     long duration = 300000;
         
@@ -128,6 +131,7 @@ public class main {
                         // variables
                         int nBlockPuzzle = 0;
                         Puzzle puzzle = MainMap.puzzleNotUsed(MainMap, puzzleList);
+
                         
                         // get how many block is filled by puzzle
                         for (int i = 0; i < puzzle.getRows(); i++) {
@@ -139,22 +143,23 @@ public class main {
                         }
                         
                         // check are there enough empty blocks for puzzle
-                        System.out.println(MainMap.isThereAValidPosition(MainMap, puzzle));
                         if (MainMap.emptyBoxInMap() >= nBlockPuzzle && MainMap.isThereAValidPosition(MainMap, puzzle)) { 
                             // trace each position for availability to be filled
                             int k = 0;
                             boolean found = false;
-                            int modifyPuzzleIter = 0;
                             while (!found && k < MainMap.getRows()) {
                                 int l = 0;
                                 while (!found && l < MainMap.getColumns()) {
+                                    // System.out.println(MainMap.canBlockFit(k, l, MainMap, puzzle));
                                     if (MainMap.canBlockFit(k, l, MainMap, puzzle)) { // block dapat masuk
                                         found = true;
                                         MainMap.setMapAfterPuzzle(k, l, MainMap, puzzle);
+                                        break;
                                     } else { // block cannot fit
-
+                                        int modifyPuzzleIter = 0;
+                                        
                                         // check every possibility
-                                        while (modifyPuzzleIter < 7 && !found) {
+                                        while (modifyPuzzleIter < 8 && !found) {
                                             puzzle.modifyPuzzle();
                                             if (MainMap.canBlockFit(k, l, MainMap, puzzle)) { // block dapat masuk
                                                 found = true;
@@ -170,7 +175,6 @@ public class main {
     
                                             // check other coordinate
                                             l++;
-                                            modifyPuzzleIter = 0;
                                         }
                                     }
                                 }
@@ -185,16 +189,16 @@ public class main {
                         // check if it's full
                         if (MainMap.getCharInMap().size() == puzzleList.length) {
                             full = true;
-                        } else {
-                            operationIter++;
                         }
+                        operationIter++;
+                        
                         
                         MainMap.getPuzzleMap();
                         System.out.println(MainMap.getCharInMap());
-                        System.out.println(operationIter);
                     }
                     
                     // final check to sysout
+                    // System.out.println("jml kotak kosong : " + MainMap.emptyBoxInMap());
                     if (MainMap.emptyBoxInMap() == 0) {
                         MainMap.getPuzzleMap();
                     } else {
@@ -202,6 +206,7 @@ public class main {
                     }
                     long timeStop = System.currentTimeMillis();
                     System.out.println("Elapsed time : " + (timeStop - timeStart) + " ms.");
+                    System.out.println("Iteration tried : " + operationIter);
 
 
                     // converting into image
@@ -286,11 +291,15 @@ public class main {
                     puzzle.add(letterBlockShape);
                     letterBlockShape = new ArrayList<>();
                     letterBlockShape.add(letterBlock.get(i));
-                    if (i == (letterBlock.size() - 1)) {
-                        puzzle.add(letterBlockShape);
-                    }
                 }
+
             }
+
+            // case : handling end in line shapes
+            if (i == (letterBlock.size() - 1)) {
+                puzzle.add(letterBlockShape);
+            }
+
         }
 
         return puzzle;
