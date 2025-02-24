@@ -39,7 +39,7 @@ public class main {
     private static Integer columns;
     private static Integer blocks;
     private static String gameMode;
-    private static File targetFile = new File("./data/test.txt");
+    private static File targetFile = new File("./data/test2.txt");
     private static List<List<Character>> letterBlock = new ArrayList<>();
     private static List<List<List<Character>>> puzzle;
     
@@ -47,15 +47,14 @@ public class main {
     public static void main(String[] args) {
         try {
             // count time elapsed
-            long timeStart = System.currentTimeMillis();
-
+            
             Puzzle[] puzzleList;
             Scanner scanner = new Scanner(targetFile);
             String line = scanner.nextLine();
             
             // reading the config
             for (int i = 0; i < 2 && scanner.hasNextLine(); i++) {
-
+                
                 // new
                 
                 // old; deprecated
@@ -85,13 +84,13 @@ public class main {
             // System.out.println("n = " + columns);
             // System.out.println("p = " + blocks);
             // System.out.println("mode = " + gameMode);
-
+            
             // reading puzzle
             while (scanner.hasNextLine()) {
-    
+                
                 // variable instantiation
                 List<Character> letterBlockPerLine = new ArrayList<>();
-                    
+                
                 // reading puzzle block per line
                 line = scanner.nextLine();
                 for (int i = 0; i < line.length(); i++) {
@@ -115,69 +114,13 @@ public class main {
                     // main algorithm
                     PuzzleMap MainMap = new PuzzleMap(rows, columns);
 
-                    // debug
-                    // MainMap.getPuzzleMap();
-                    // for (int i = 0; i < MainMap.getRows(); i++) {
-                    //     for (int j = 0; j < MainMap.getColumns() - 2; j++) {
-                    //         MainMap.setElement(i, j, '+');
-                    //     }
-                    // }
-                    // MainMap.setElement(0, 3, '+');
-                    // MainMap.setElement(1, 4, '+');
-                    // MainMap.setElement(2, 4, '+');
-
-                    // debug: testing canBlockFit
-                    // MainMap.getPuzzleMap();
-                    // int iteration = 0;
-                    // boolean found = false;
-                    // while (iteration < 8 && !found) {
-                    //     if (MainMap.canBlockFit(0, 3, MainMap, puzzleList[0])) {
-                    //         MainMap.setMapAfterPuzzle(0, 3, MainMap, puzzleList[0]);
-                    //     } else {
-                    //         puzzleList[0].modifyPuzzle();
-                    //     }
-                    //     iteration++;
-                    // }
-                    // MainMap.getPuzzleMap();
-
-                    // System.out.println(puzzleList[4].getMatrix());
-                    // puzzleList[4].modifyPuzzle();
-                    // System.out.println(puzzleList[4].getMatrix());
-                    // puzzleList[4].modifyPuzzle();
-                    // System.out.println(puzzleList[4].getMatrix());
-                    // puzzleList[4].modifyPuzzle();
-                    // System.out.println(puzzleList[4].getMatrix());
-                    // puzzleList[4].modifyPuzzle();
-                    // System.out.println(puzzleList[4].getMatrix());
-                    // puzzleList[4].modifyPuzzle();
-                    // System.out.println(puzzleList[4].getMatrix());
-                    // puzzleList[4].modifyPuzzle();
-                    // System.out.println(puzzleList[4].getMatrix());
-                    // puzzleList[4].modifyPuzzle();
-                    // System.out.println(puzzleList[4].getMatrix());
-                    // puzzleList[4].modifyPuzzle();
-                    // System.out.println(puzzleList[4].getMatrix());
-
-                    // System.out.println(puzzleList[4].getRows());
-                    // System.out.println(puzzleList[4].getColumns());
-                    // System.out.println(puzzleList[4].getMatrix());
-                    // System.out.println(puzzleList[4].getMatrix());
-                    // puzzleList[4].getRows();
-                    // puzzleList[4].getColumns();
-                    // puzzleList[4].getStatusFlippedHorizontal();
-                    // puzzleList[4].getStatusFlippedVertical();
-                    // System.out.println(puzzleList[4].getMatrix());
-
-                    // System.out.println(MainMap.canBlockFit(0, 2, MainMap, puzzleList[4]));
-                    // MainMap.setMapAfterPuzzle(0, 2, MainMap, puzzleList[4]);
-                    
-
                     // fill the main map
 
                     // variables
                     boolean full = false;
                     int operationIter = 0;             
                     int maxIter =  8 * puzzleList.length * factorial(puzzleList.length) * 100;
+                    long timeStart = System.currentTimeMillis();
         
                     while (MainMap.getCharInMap().size() <= puzzleList.length && operationIter < maxIter && !full) {
                         
@@ -246,8 +189,8 @@ public class main {
                             operationIter++;
                         }
                         
-                        // MainMap.getPuzzleMap();
-                        // System.out.println(MainMap.getCharInMap());
+                        MainMap.getPuzzleMap();
+                        System.out.println(MainMap.getCharInMap());
                         System.out.println(operationIter);
                     }
                     
