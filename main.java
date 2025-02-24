@@ -36,7 +36,7 @@ import javax.imageio.ImageIO;
 import src.Puzzle;
 import src.PuzzleMap;
 
-public class main {
+public class Main {
         
     // instantiation variable
     private static Integer rows;

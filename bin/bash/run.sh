@@ -1,1 +1,0 @@
-jar cfe solver.jar solver ../../main.java ../../src/Matrix.java ../../src/Puzzle.java ../../PuzzleMap.java
