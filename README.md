@@ -9,5 +9,5 @@ file .jar yang disediakan pada folder bin. Program ini dibuat oleh Brian A. Hadi
 # How to Run
 1. Lakukan git clone terhadap repository ini.
 2. Pastikan bahwa sudah terdapat Java Compiler terpasang pada perangkat Anda.
-3. Jalankan ''' javac Main.java /src/* ''' pada terminal untuk mengompilasi program.
-4. Jalankan ''' java Main.java ''' pada terminal untuk menjalankan program.
+3. Jalankan ``` javac Main.java /src/* ``` pada terminal untuk mengompilasi program.
+4. Jalankan ``` java Main.java ``` pada terminal untuk menjalankan program.
