@@ -115,6 +115,7 @@ public class PuzzleMap {
             }
         }
 
+
         // check if the block can fit
         if (map.emptyBoxInMap() > nBlocksPuzzle) {
             int i = 0;
@@ -122,6 +123,7 @@ public class PuzzleMap {
                 int j = 0;
                 while (j < puzzle.getColumns() && fit) {
                     if ((i + rows) < map.getRows() && ((j + cols) < map.getColumns())) {
+                        // System.out.println("map at " + i + rows + " and " + j + cols + " position : " + map.getElement(i + rows, j + cols));
                         if (puzzle.getElement(i, j) == '1' && map.getElement(i + rows, j + cols) == '+') {
                             fit = false;
                         }
@@ -157,13 +159,13 @@ public class PuzzleMap {
         
         // variables
         Random random = new Random();
-        int i = random.nextInt(7);
+        int i = random.nextInt(puzzleList.length);
         boolean found = false;
         while (!found) {
-            if (!map.getCharInMap().contains(puzzleList[i].getCharacter()) ) {
+            if (!map.isPuzzleUsed(map, puzzleList[i])) {
                 found = true;
             } else {
-                i = random.nextInt(7);
+                i = random.nextInt(puzzleList.length);
             }
         }
         
@@ -200,10 +202,13 @@ public class PuzzleMap {
             while (j < map.getColumns() && !found) {
                 if (map.canBlockFit(i, j, map, puzzle)) {
                     found = true;
-                } 
-                j++;
+                } else {
+                    j++;
+                }
             }
-            i++;
+            if (!found) {
+                i++;
+            }
             
         }
 

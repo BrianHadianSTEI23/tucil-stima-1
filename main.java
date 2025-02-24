@@ -121,8 +121,9 @@ public class main {
                     int operationIter = 0;             
                     int maxIter =  8 * puzzleList.length * factorial(puzzleList.length) * 100;
                     long timeStart = System.currentTimeMillis();
+                    long duration = 300000;
         
-                    while (MainMap.getCharInMap().size() <= puzzleList.length && operationIter < maxIter && !full) {
+                    while (MainMap.getCharInMap().size() <= puzzleList.length && !full && (System.currentTimeMillis() - timeStart) < duration) {
                         
                         // variables
                         int nBlockPuzzle = 0;
@@ -136,10 +137,9 @@ public class main {
                                 }
                             }
                         }
-                        // System.out.println(MainMap.getCharInMap());
-                        // System.out.println("hello");
                         
                         // check are there enough empty blocks for puzzle
+                        System.out.println(MainMap.isThereAValidPosition(MainMap, puzzle));
                         if (MainMap.emptyBoxInMap() >= nBlockPuzzle && MainMap.isThereAValidPosition(MainMap, puzzle)) { 
                             // trace each position for availability to be filled
                             int k = 0;
@@ -195,7 +195,7 @@ public class main {
                     }
                     
                     // final check to sysout
-                    if (full) {
+                    if (MainMap.emptyBoxInMap() == 0) {
                         MainMap.getPuzzleMap();
                     } else {
                         System.out.println("Tidak bisa dilakukan proses brute force.\nSilakan gunakan file lain.");
