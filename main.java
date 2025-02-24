@@ -39,14 +39,41 @@ public class main {
     private static Integer columns;
     private static Integer blocks;
     private static String gameMode;
-    private static File targetFile = new File("./data/test2.txt");
+    private static File targetFile;
     private static List<List<Character>> letterBlock = new ArrayList<>();
     private static List<List<List<Character>>> puzzle;
     
     // main program
     public static void main(String[] args) {
         try {
-            // count time elapsed
+            // reading the content of the directory
+            String directoryPath = "./test/";
+            Scanner inputScanner = new Scanner(System.in);
+            String fileName;
+
+            File directory = new File(directoryPath);
+            
+            if (directory.exists() && directory.isDirectory()) {
+                String[] files = directory.list();
+                
+                if (files != null) {
+                    for (String file : files) {
+                        System.out.println(file);
+                    }
+                }
+                
+                // inputting the name of the directory
+                System.out.println("Enter filename : ");
+                fileName = inputScanner.nextLine();
+                targetFile = new File(directory, fileName);
+                while (!targetFile.exists() || !targetFile.isFile()) {
+                    System.out.println("Enter filename again : ");
+                    fileName = inputScanner.nextLine();
+                    targetFile = new File(directory, fileName);
+                }
+                inputScanner.close();
+            }
+            
             
             Puzzle[] puzzleList;
             Scanner scanner = new Scanner(targetFile);
@@ -78,12 +105,6 @@ public class main {
                     gameMode = modeBuilder.toString();
                 }
             }
-            
-            // debug
-            // System.out.println("m = " + rows);
-            // System.out.println("n = " + columns);
-            // System.out.println("p = " + blocks);
-            // System.out.println("mode = " + gameMode);
             
             // reading puzzle
             while (scanner.hasNextLine()) {
